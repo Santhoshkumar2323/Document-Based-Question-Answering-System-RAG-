@@ -1,0 +1,17 @@
+# Core
+python-dotenv>=1.2.1
+
+# Document parsing
+pymupdf>=1.26.7
+
+# Embeddings
+sentence-transformers>=5.2.0
+
+# Vector store
+chromadb>=1.4.0
+
+# LLM API (Gemini Unified SDK)
+google-genai>=1.56.0
+
+# Utilities
+numpy>=2.2.1

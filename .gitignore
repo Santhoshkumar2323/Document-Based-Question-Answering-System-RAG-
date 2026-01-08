@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+.env
+
+# Data & indexes
+data/
+!data/docs/
+!data/docs/.gitkeep
+
+# Vector DB / indexes
+*.pkl
+*.bin
+chroma/
+bm25_index.pkl
+registry.json
+
+# Logs
+logs/
+
+# OS
+.DS_Store
