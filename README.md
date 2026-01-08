@@ -1,4 +1,4 @@
-Document-Based Question Answering System
+Document-Based Question Answering System (RAG)
 
 This project is a local document question-answering system built on standard Retrieval-Augmented Generation (RAG) components.
 
