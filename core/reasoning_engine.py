@@ -8,11 +8,6 @@ logger = setup_logger(__name__)
 
 
 class ReasoningEngine:
-    """
-    Converts evidence into a reasoning plan.
-    This is the intelligence layer.
-    """
-
     def analyze(
         self,
         question: str,
@@ -23,8 +18,6 @@ class ReasoningEngine:
                 "can_answer": False,
                 "reason": "No evidence",
             }
-
-        # Group by document
         by_doc = defaultdict(list)
         for ev in evidences:
             by_doc[ev.chunk.source].append(ev)
@@ -43,8 +36,6 @@ class ReasoningEngine:
                 "source": source,
                 "regions": regions,
             })
-
-        # Determine question intent (simple but explicit)
         q = question.lower()
         if any(k in q for k in ["theme", "overall", "main", "summary"]):
             intent = "synthesis"

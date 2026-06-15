@@ -8,12 +8,6 @@ logger = setup_logger(__name__)
 
 
 def chunk_documents(records: List[dict]) -> List[Chunk]:
-    """
-    Splits ingested document records into fixed-size overlapping chunks.
-
-    Each chunk ID is deterministic:
-    doc_id:page:chunk_index
-    """
     chunks: List[Chunk] = []
 
     for record in records:
@@ -29,8 +23,6 @@ def chunk_documents(records: List[dict]) -> List[Chunk]:
         while start < text_length:
             end = start + CHUNK_SIZE
             chunk_text = text[start:end]
-
-            # Avoid splitting words mid-way
             if end < text_length:
                 last_space = chunk_text.rfind(" ")
                 if last_space != -1:

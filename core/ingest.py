@@ -9,9 +9,6 @@ logger = setup_logger(__name__)
 
 
 def _read_pdf(path: Path) -> List[Tuple[str, int]]:
-    """
-    Reads a PDF and returns a list of (text, page_number).
-    """
     pages = []
     with fitz.open(path) as doc:
         for i, page in enumerate(doc):
@@ -22,9 +19,6 @@ def _read_pdf(path: Path) -> List[Tuple[str, int]]:
 
 
 def _read_txt(path: Path) -> List[Tuple[str, int]]:
-    """
-    Reads a TXT file and returns a single-page list.
-    """
     text = path.read_text(encoding="utf-8", errors="ignore")
     if text and text.strip():
         return [(text, None)]
@@ -32,27 +26,10 @@ def _read_txt(path: Path) -> List[Tuple[str, int]]:
 
 
 def _normalize(text: str) -> str:
-    """
-    Light text normalization.
-    Intentionally conservative.
-    """
     return " ".join(text.split())
 
 
 def ingest_new_documents(new_docs: Dict[str, dict]) -> List[dict]:
-    """
-    Ingests ONLY new documents.
-
-    Args:
-        new_docs: Mapping of doc_id -> { filename, path }
-
-    Returns:
-        List of dicts with keys:
-        - doc_id
-        - text
-        - source
-        - page
-    """
     records: List[dict] = []
 
     for doc_id, info in new_docs.items():

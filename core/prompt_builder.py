@@ -9,14 +9,8 @@ def build_prompt(
     question: str, 
     history: Optional[List[Dict[str, str]]] = None
 ) -> str:
-    
-    
-    # ALWAYS try to answer.
-
     intent = reasoning.get("intent", "general")
     documents = reasoning.get("documents", [])
-
-    # 1. Build Evidence Block
     blocks = []
     for doc in documents:
         block = [f"Document: {doc['source']}"]
@@ -29,8 +23,6 @@ def build_prompt(
     evidence_text = "\n\n".join(blocks)
     if not evidence_text:
         evidence_text = "No direct evidence found in local documents."
-
-    # 2. Build History Block
     history_text = "No previous conversation."
     if history:
         history_lines = []

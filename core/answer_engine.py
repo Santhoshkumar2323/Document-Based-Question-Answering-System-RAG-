@@ -7,18 +7,12 @@ from google.genai import types
 from shared.config import GEMINI_MODEL_NAME, MAX_OUTPUT_TOKENS
 from shared.logger import setup_logger
 
-# Load env vars deterministically
 load_dotenv(override=True)
 
 logger = setup_logger(__name__)
 
 
 class AnswerEngine:
-    """
-    Thin, explicit LLM boundary.
-    Now handles both answering and query rewriting.
-    """
-
     def __init__(self):
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
@@ -28,10 +22,6 @@ class AnswerEngine:
         self.client = genai.Client(api_key=api_key)
 
     def generate(self, prompt: str) -> str:
-        """
-        Execute a single LLM call and return text.
-        NEVER returns None.
-        """
         try:
             response = self.client.models.generate_content(
                 model=GEMINI_MODEL_NAME,
@@ -41,12 +31,8 @@ class AnswerEngine:
                     max_output_tokens=MAX_OUTPUT_TOKENS,
                 ),
             )
-
-            # Primary path
             if hasattr(response, "text") and response.text:
                 return response.text.strip()
-
-            # Fallback path (SDK schema drift)
             if hasattr(response, "candidates"):
                 parts = response.candidates[0].content.parts
                 text = "".join(
@@ -63,14 +49,8 @@ class AnswerEngine:
             return f"LLM error: {str(e)}"
 
     def rewrite_query(self, question: str, history: List[Dict[str, str]]) -> str:
-        """
-        FORENSIC ADDITION:
-        Uses the LLM to rewrite a follow-up question into a standalone search query.
-        """
         if not history:
-            return question  # No history? No need to rewrite.
-
-        # Convert history to simple text format for the prompt
+            return question 
         history_text = "\n".join([f"{h['role'].upper()}: {h['content']}" for h in history])
 
         prompt = f"""
@@ -93,10 +73,7 @@ class AnswerEngine:
         REFINED SEARCH QUERY:
         """
         
-        # We use the existing generate method
         refined = self.generate(prompt)
-        
-        # Clean up if the LLM adds prefixes like "Refined Query:"
         refined = refined.replace("Refined Search Query:", "").replace("Refined Query:", "").strip()
         
         logger.info(f"Query Rewritten: '{question}' -> '{refined}'")

@@ -9,12 +9,6 @@ def apply_guardrails(
     trace: DecisionTrace,
     confidence: str,
 ) -> str | None:
-    """
-    RELAXED GUARDRAILS:
-    Never refuse. Just warn.
-    This allows Gemini to use its internal knowledge when docs fail.
-    """
-
     warnings = []
 
     if len(trace.used_evidence) < MIN_EVIDENCE_COUNT:
@@ -28,7 +22,4 @@ def apply_guardrails(
     if trace.gaps:
         logger.info("Guardrail note: Reasoning gaps detected.")
         warnings.append("Information gaps exist.")
-
-    # We return None (meaning "Go ahead") but we log the warnings.
-    # The prompt builder will handle the "Be careful" instruction.
     return None

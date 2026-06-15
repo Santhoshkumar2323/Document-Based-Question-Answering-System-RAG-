@@ -1,7 +1,7 @@
 from typing import List
 
 from shared.models import RetrievedEvidence, DecisionTrace
-from shared.config import MIN_SIMILARITY_SCORE
+from shared.config import MAX_RERANK_DISTANCE
 from shared.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -11,15 +11,11 @@ def build_decision_trace(
     evidences: List[RetrievedEvidence],
     question: str,
 ) -> DecisionTrace:
-    """
-    Separates used vs ignored evidence and identifies gaps.
-    """
-
     used: List[RetrievedEvidence] = []
     ignored: List[RetrievedEvidence] = []
 
     for ev in evidences:
-        if ev.score <= MIN_SIMILARITY_SCORE:
+        if ev.score <= MAX_RERANK_DISTANCE:
             used.append(ev)
         else:
             ignored.append(ev)
@@ -30,7 +26,7 @@ def build_decision_trace(
     if not used:
         gaps.append("No evidence directly relevant to the question.")
 
-    if any("why" in question.lower() for _ in [0]) and used:
+    if "why" in question.lower() and used:
         notes.append(
             "Question asks for explanation ('why'), "
             "but documents appear descriptive rather than causal."

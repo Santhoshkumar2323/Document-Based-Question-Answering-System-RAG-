@@ -2,7 +2,6 @@ import json
 import hashlib
 from pathlib import Path
 from typing import Dict
-
 from shared.config import REGISTRY_FILE
 from shared.logger import setup_logger
 
@@ -10,10 +9,6 @@ logger = setup_logger(__name__)
 
 
 def compute_doc_id(path: Path) -> str:
-    """
-    Computes a deterministic document ID based on file contents.
-    Uses SHA256 over raw bytes.
-    """
     hasher = hashlib.sha256()
     with path.open("rb") as f:
         for chunk in iter(lambda: f.read(8192), b""):
@@ -22,10 +17,6 @@ def compute_doc_id(path: Path) -> str:
 
 
 def load_registry() -> Dict[str, dict]:
-    """
-    Loads the document registry from disk.
-    Returns an empty dict if registry does not exist.
-    """
     if not REGISTRY_FILE.exists():
         logger.info("Registry file not found, initializing new registry")
         return {}
@@ -35,9 +26,6 @@ def load_registry() -> Dict[str, dict]:
 
 
 def save_registry(registry: Dict[str, dict]) -> None:
-    """
-    Persists the registry to disk.
-    """
     REGISTRY_FILE.parent.mkdir(parents=True, exist_ok=True)
     with REGISTRY_FILE.open("w", encoding="utf-8") as f:
         json.dump(registry, f, indent=2)
@@ -45,10 +33,6 @@ def save_registry(registry: Dict[str, dict]) -> None:
 
 
 def scan_documents(docs_dir: Path) -> Dict[str, dict]:
-    """
-    Scans docs directory and returns a mapping:
-    doc_id -> { filename, path }
-    """
     scanned: Dict[str, dict] = {}
 
     for path in docs_dir.iterdir():
@@ -70,16 +54,6 @@ def diff_registry(
     scanned: Dict[str, dict],
     registry: Dict[str, dict],
 ) -> Dict[str, Dict[str, dict]]:
-    """
-    Compares current disk state with registry.
-
-    Returns:
-        {
-          "new": {...},
-          "existing": {...},
-          "deleted": {...}
-        }
-    """
     scanned_ids = set(scanned.keys())
     registry_ids = set(registry.keys())
 
