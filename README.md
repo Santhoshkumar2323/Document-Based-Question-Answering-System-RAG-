@@ -1,65 +1,180 @@
-Document-Based Question Answering System
+# Document Based Question Answering RAG system
 
-This project is a local document question-answering system built on standard Retrieval-Augmented Generation (RAG) components.
+What this project is
 
-It indexes documents from disk, retrieves relevant text chunks, and uses an LLM to generate answers grounded in retrieved content.
+This is a Retrieval-Augmented Generation (RAG) system designed to answer questions using a local documents, while explicitly mentioning evidence quality, gaps, and confidence.
 
-Data and scope:
+It is a document reasoning pipeline with traceability.
 
-Works only on local PDF and TXT files
-Documents are read from a fixed folder on disk
-All indexing and deletion is explicit, not automatic
+This system is designed to answer a harder question:
 
-What the system does
+“Do we actually have enough evidence to answer this?”
 
-1.Document ingestion
+It makes retrieval quality and reasoning gaps.
 
-Reads PDF and TXT files from a directory
-Normalizes text conservatively (no aggressive cleaning)
+Architecture:
 
-2.Chunking
+The system is split into four  layers:
 
-Splits documents into fixed-size overlapping chunks
-Chunk IDs are deterministic and tied to document content
+1. Document lifecycle & indexing
+2. 
+Deterministic document IDs using content hashing
 
-3.Indexing
+Registry tracks document state on disk
 
-Stores embeddings in a persistent vector database
-Builds a separate keyword (BM25) index
-Maintains a registry file as the source of truth
+Automatic detection of:
 
-4.Retrieval
+new documents
 
-Performs hybrid search:
-semantic vector search
-keyword search
-Deduplicates and reranks results using a cross-encoder
+deleted documents
 
-5.Answer generation
+registry ↔ vector-store inconsistencies
 
-Passes retrieved evidence to the LLM
-Generates answers with explicit use of evidence when available
+Safe re-indexing and cleanup
 
-6.Traceability
+Documents are ingested → normalized → chunked → embedded → indexed.
 
-Records which evidence was used or ignored
-Flags gaps when documents do not support the question
-Outputs a confidence level
+2. Hybrid retrieval
+3. 
+Querying uses three stages:
 
-Deletion and updates:
+Vector search (semantic recall via sentence embeddings)
 
-The filesystem is the source of truth
-Deleting a document file does not immediately delete its vectors
-Deletions are applied only when the indexing pipeline is rerun
+BM25 keyword search (lexical recall)
 
-This is intentional and avoids silent or accidental data loss.
+Cross-encoder reranking (precision scoring)
 
-Development note:
+Results from vector + BM25 are:
 
-The code was produced using LLM-assisted development.
-The work here is system assembly, configuration, and validation
+fused
 
-How to run:
+deduplicated
+
+reranked
+
+trimmed to a high-quality evidence set
+
+This avoids both semantic drift and keyword brittleness.
+
+3. Reasoning & traceability
+4. 
+Before calling the LLM, the system constructs a Decision Trace:
+
+Evidence used vs ignored
+
+Gaps where documents do not support the question
+
+Notes when answers rely on weak or single-source evidence
+
+This trace is preserved and shown alongside the answer.
+
+6. Answer generation (LLM boundary)
+
+The LLM is treated as a thin reasoning layer, not a source of truth.
+
+Rules enforced in the prompt:
+
+Prefer local document evidence
+
+Transparently fall back to general knowledge if documents are insufficient
+
+Use conversation history to resolve ambiguity
+
+Avoid silent hallucination
+
+The system always attempts an answer, but never hides uncertainty.
+
+Retrieval & reasoning flow (step-by-step)
+
+User question received
+
+(Chat mode) Question is rewritten into a standalone search query
+
+Hybrid retrieval (Vector + BM25)
+
+Cross-encoder reranking
+
+Evidence split into:
+
+usable evidence
+
+ignored evidence
+
+Confidence score computed from retrieval distances
+
+Guardrails assess evidence sufficiency
+
+
+Reasoning plan built from evidence
+Prompt assembled with:
+
+evidence
+
+history
+
+transparency rules
+
+LLM generates answer
+
+Decision trace and confidence returned
+
+How to use
+
+1. Index documents
+
+Place PDFs or TXT files in data/docs/, then run:
+
 python main.py index
-python main.py query "your question"
+
+4. Ask a single question
+
+python main.py query "Your question here"
+
+6. Interactive chat mode
+
 python main.py chat
+
+Chat mode maintains short-term memory and rewrites follow-up questions into standalone search queries for better retrieval.
+
+Chat mode maintains short-term memory and rewrites follow-up questions into standalone search queries for better retrieval.
+
+Limitations:
+
+If documents are sparse or poorly written, answers rely more on LLM knowledge
+
+Cross-encoder reranking increases latency
+
+Confidence is heuristic, not probabilistic
+
+No claim of factual correctness beyond available evidence
+
+LLMs are used for:
+
+query rewriting
+
+reasoning synthesis
+
+answer generation
+
+They are not used for:
+
+retrieval
+scoring
+
+evidence selection
+
+document ingestion
+
+All retrieval, filtering, and confidence logic is deterministic.
+
+Intended use
+
+Internal knowledge bases
+
+Research document analysis
+
+Technical or analytical document QA
+
+
+-This is a working, modular RAG system focused on correctness, traceability, and reasoning quality.
+
