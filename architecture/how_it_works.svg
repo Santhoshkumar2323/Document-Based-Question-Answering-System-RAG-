@@ -1,0 +1,98 @@
+<svg viewBox="0 0 1100 2398" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica,Arial,sans-serif">
+<rect x="0" y="0" width="1100" height="2398" fill="#ffffff"/>
+
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L0,6 L9,3 z" fill="#6b7280"/>
+  </marker>
+</defs>
+
+<text x="550.0" y="46" text-anchor="middle" font-size="25" font-weight="800" fill="#111827">Document-Based Question Answering RAG System — How It Works</text>
+<text x="550.0" y="70" text-anchor="middle" font-size="13.5" fill="#6b7280">A command-line RAG tool with two tracks: index your documents once, then query or chat against them — every answer comes with a transparent decision trace</text>
+<text x="550.0" y="90" text-anchor="middle" font-size="11.5" fill="#9ca3af">(pill under each box = the source file that does it)</text>
+<text x="220" y="118" font-size="13" font-weight="800" letter-spacing="1.1" fill="#4338ca" font-family="Helvetica,Arial,sans-serif">ENTRY POINT — ONE CLI, THREE COMMANDS</text>
+<rect x="220" y="142" width="600" height="137" rx="12" fill="#e0e7ff" stroke="#4338ca" stroke-width="1.8"/>
+<text x="520.0" y="172" text-anchor="middle" font-size="16" font-weight="700" fill="#1e1b4b" font-family="Helvetica,Arial,sans-serif">python main.py  index  |  query "..."  |  chat</text>
+<text x="520.0" y="196" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">“index” builds/updates the knowledge base. “query” and “chat” both ask questions</text>
+<text x="520.0" y="214" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">against it — chat just adds memory of the conversation.</text>
+<rect x="485.55" y="227" width="68.9" height="26" rx="10" fill="#ffffff" stroke="#4338ca" stroke-width="1.2" opacity="0.9"/>
+<text x="520.0" y="242" text-anchor="middle" font-size="11.5" fill="#4338ca" font-family="Menlo,Consolas,monospace" font-weight="600">main.py</text>
+<line x1="550.0" y1="279" x2="550.0" y2="319" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="90" y="319" font-size="13" font-weight="800" letter-spacing="1.1" fill="#1d4ed8" font-family="Helvetica,Arial,sans-serif">TRACK A — INDEXING (RUN THIS FIRST, AND WHENEVER DOCS CHANGE)</text>
+<rect x="90" y="343" width="940" height="138" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+<text x="560.0" y="374" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" font-family="Helvetica,Arial,sans-serif">Scans the documents folder and compares it to what's already indexed</text>
+<text x="560.0" y="399" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">Works out exactly which files are new, unchanged, or deleted — by hashing file contents, not filenames, so a renamed-but-identical</text>
+<text x="560.0" y="417" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">file isn't reprocessed</text>
+<rect x="388.2" y="430" width="343.6" height="26" rx="10" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="445" text-anchor="middle" font-size="11.5" fill="#1d4ed8" font-family="Menlo,Consolas,monospace" font-weight="600">registry.py → scan_documents() + diff_registry()</text>
+<line x1="550.0" y1="481" x2="550.0" y2="521" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="521" width="940" height="120" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+<text x="560.0" y="552" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" font-family="Helvetica,Arial,sans-serif">Reads every new or changed file, page by page</text>
+<text x="560.0" y="577" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">Supports PDF (via PyMuPDF) and plain text. Unsupported file types are skipped with a warning, not an error.</text>
+<rect x="518.85" y="590" width="82.30000000000001" height="26" rx="10" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="605" text-anchor="middle" font-size="11.5" fill="#1d4ed8" font-family="Menlo,Consolas,monospace" font-weight="600">ingest.py</text>
+<line x1="550.0" y1="641" x2="550.0" y2="681" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="681" width="940" height="120" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+<text x="560.0" y="712" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" font-family="Helvetica,Arial,sans-serif">Splits each page into overlapping chunks (~800 characters, 150-character overlap)</text>
+<text x="560.0" y="737" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">The overlap means a sentence split across a chunk boundary still appears whole in at least one chunk</text>
+<rect x="515.5" y="750" width="89.0" height="26" rx="10" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="765" text-anchor="middle" font-size="11.5" fill="#1d4ed8" font-family="Menlo,Consolas,monospace" font-weight="600">chunker.py</text>
+<line x1="550.0" y1="801" x2="550.0" y2="841" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="841" width="940" height="160" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+<text x="560.0" y="872" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" font-family="Helvetica,Arial,sans-serif">Embeds every chunk and stores it in the vector database, then rebuilds the keyword search</text>
+<text x="560.0" y="894" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" font-family="Helvetica,Arial,sans-serif">index</text>
+<text x="560.0" y="919" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">Also removes vectors for any deleted documents first, and re-embeds anything the registry says should exist but is missing from the</text>
+<text x="560.0" y="937" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">database (self-healing)</text>
+<rect x="374.79999999999995" y="950" width="370.40000000000003" height="26" rx="10" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="965" text-anchor="middle" font-size="11.5" fill="#1d4ed8" font-family="Menlo,Consolas,monospace" font-weight="600">embed_store.py + index_pipeline.py → ChromaDB + BM25</text>
+<line x1="550.0" y1="1001" x2="550.0" y2="1041" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="220" y="1041" width="600" height="119" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+<text x="520.0" y="1071" text-anchor="middle" font-size="16" font-weight="700" fill="#1e3a8a" font-family="Helvetica,Arial,sans-serif">Saves the updated registry to disk</text>
+<text x="520.0" y="1095" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">So the next "index" run knows exactly what's already done</text>
+<rect x="411.85" y="1108" width="216.3" height="26" rx="10" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.2" opacity="0.9"/>
+<text x="520.0" y="1123" text-anchor="middle" font-size="11.5" fill="#1d4ed8" font-family="Menlo,Consolas,monospace" font-weight="600">registry.py → save_registry()</text>
+<line x1="90" y1="1190" x2="1010" y2="1190" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="4,4"/>
+<text x="90" y="1230" font-size="13" font-weight="800" letter-spacing="1.1" fill="#7e22ce" font-family="Helvetica,Arial,sans-serif">TRACK B — QUERY &amp; CHAT (ASK QUESTIONS AGAINST WHAT'S INDEXED)</text>
+<rect x="90" y="1254" width="940" height="142" rx="12" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.8"/>
+<text x="560.0" y="1285" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">Chat mode only: if there's earlier conversation, rewrites the question into a standalone</text>
+<text x="560.0" y="1307" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">search query</text>
+<text x="560.0" y="1332" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">Resolves pronouns like “it” or “that” using the conversation history, so follow-up questions still search well</text>
+<rect x="435.1" y="1345" width="249.8" height="26" rx="10" fill="#ffffff" stroke="#7e22ce" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="1360" text-anchor="middle" font-size="11.5" fill="#7e22ce" font-family="Menlo,Consolas,monospace" font-weight="600">answer_engine.py → rewrite_query()</text>
+<line x1="550.0" y1="1396" x2="550.0" y2="1436" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="1436" width="940" height="142" rx="12" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.8"/>
+<text x="560.0" y="1467" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">Hybrid search: combines vector similarity search with keyword (BM25) search, then reranks</text>
+<text x="560.0" y="1489" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">everything by actual relevance</text>
+<text x="560.0" y="1514" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">Two different search methods catch different things — the reranker (a cross-encoder) then sorts the combined results properly</text>
+<rect x="508.8" y="1527" width="102.4" height="26" rx="10" fill="#ffffff" stroke="#7e22ce" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="1542" text-anchor="middle" font-size="11.5" fill="#7e22ce" font-family="Menlo,Consolas,monospace" font-weight="600">retriever.py</text>
+<line x1="550.0" y1="1578" x2="550.0" y2="1618" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="1618" width="940" height="120" rx="12" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.8"/>
+<text x="560.0" y="1649" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">Splits the results into evidence actually good enough to use vs. evidence that's ignored</text>
+<text x="560.0" y="1674" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">Also flags gaps (no relevant evidence at all) and notes (e.g. a “why” question but the documents are only descriptive)</text>
+<rect x="492.05" y="1687" width="135.9" height="26" rx="10" fill="#ffffff" stroke="#7e22ce" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="1702" text-anchor="middle" font-size="11.5" fill="#7e22ce" font-family="Menlo,Consolas,monospace" font-weight="600">decision_trace.py</text>
+<line x1="550.0" y1="1738" x2="550.0" y2="1778" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="1778" width="940" height="120" rx="12" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.8"/>
+<text x="560.0" y="1809" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">Scores confidence (High / Medium / Low) from the best match, and runs a guardrail check</text>
+<text x="560.0" y="1834" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">Worth knowing: guardrails.py currently only logs a warning when confidence is low — it never actually blocks or changes the answer</text>
+<rect x="451.85" y="1847" width="216.3" height="26" rx="10" fill="#ffffff" stroke="#7e22ce" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="1862" text-anchor="middle" font-size="11.5" fill="#7e22ce" font-family="Menlo,Consolas,monospace" font-weight="600">confidence.py + guardrails.py</text>
+<line x1="550.0" y1="1898" x2="550.0" y2="1938" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="1938" width="940" height="160" rx="12" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.8"/>
+<text x="560.0" y="1969" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">Groups evidence by source document, decides if this needs a factual answer or a synthesis</text>
+<text x="560.0" y="1991" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">across documents, then builds the final prompt</text>
+<text x="560.0" y="2016" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">The prompt's own rules: use local documents first, fall back to general knowledge if evidence is missing, and always say which one</text>
+<text x="560.0" y="2034" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">was used</text>
+<rect x="418.35" y="2047" width="283.3" height="26" rx="10" fill="#ffffff" stroke="#7e22ce" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="2062" text-anchor="middle" font-size="11.5" fill="#7e22ce" font-family="Menlo,Consolas,monospace" font-weight="600">reasoning_engine.py + prompt_builder.py</text>
+<line x1="550.0" y1="2098" x2="550.0" y2="2138" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="90" y="2138" width="940" height="142" rx="12" fill="#f3e8ff" stroke="#7e22ce" stroke-width="1.8"/>
+<text x="560.0" y="2169" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">Sends the prompt to Gemini and prints the answer, its confidence level, and the full decision</text>
+<text x="560.0" y="2191" text-anchor="middle" font-size="17" font-weight="700" fill="#3b0764" font-family="Helvetica,Arial,sans-serif">trace</text>
+<text x="560.0" y="2216" text-anchor="middle" font-size="13" fill="#4b5563" font-family="Helvetica,Arial,sans-serif">In chat mode, this question and answer are also saved to memory (last 10 exchanges) for the next follow-up question</text>
+<rect x="431.75" y="2229" width="256.5" height="26" rx="10" fill="#ffffff" stroke="#7e22ce" stroke-width="1.2" opacity="0.9"/>
+<text x="560.0" y="2244" text-anchor="middle" font-size="11.5" fill="#7e22ce" font-family="Menlo,Consolas,monospace" font-weight="600">answer_engine.py → Gemini · main.py</text>
+<line x1="90" y1="2314" x2="1010" y2="2314" stroke="#e5e7eb" stroke-width="1"/>
+<text x="550.0" y="2338" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="Helvetica,Arial,sans-serif">Used by both tracks: <tspan font-weight="700" fill="#6b7280">config.py</tspan> (paths, model names, thresholds), <tspan font-weight="700" fill="#6b7280">logger.py</tspan>, and <tspan font-weight="700" fill="#6b7280">models.py</tspan> (shared data structures)</text>
+</svg>

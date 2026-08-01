@@ -12,13 +12,16 @@ This system is designed to answer a harder question:
 
 It makes retrieval quality and reasoning gaps.
 
+## Architecture
+![Architecture Diagram](./architecture/how_it_works.svg)
+
 Architecture:
 
 The system is split into four  layers:
 
 1. Document lifecycle & indexing
-2. 
-Deterministic document IDs using content hashing
+
+2. Deterministic document IDs using content hashing
 
 Registry tracks document state on disk
 
@@ -35,8 +38,8 @@ Safe re-indexing and cleanup
 Documents are ingested → normalized → chunked → embedded → indexed.
 
 2. Hybrid retrieval
-3. 
-Querying uses three stages:
+
+3. Querying uses three stages:
 
 Vector search (semantic recall via sentence embeddings)
 
@@ -57,8 +60,8 @@ trimmed to a high-quality evidence set
 This avoids both semantic drift and keyword brittleness.
 
 3. Reasoning & traceability
-4. 
-Before calling the LLM, the system constructs a Decision Trace:
+
+4. Before calling the LLM, the system constructs a Decision Trace:
 
 Evidence used vs ignored
 
